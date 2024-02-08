@@ -1,13 +1,21 @@
-// index.mjs
-import express from 'express';
-
+const express = require("express");
 const app = express();
-const port = 3000;
+const router = express.Router();
 
-app.get('/', (req, res) => {
-  res.send('Hello, Express with ESM!');
+require('dotenv').config();
+app.use(express.json());
+
+const pool = require('./database');
+
+
+app.get("/", async (req, res) => {
+    try {
+        const { rows } = await pool.query("select * from books");
+        res.json(rows);
+    } catch (error) {
+        res.json({ msg: error.msg });
+    }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+
+app.listen(process.env.PORT, () => console.log("Server is running on port 5000"));
