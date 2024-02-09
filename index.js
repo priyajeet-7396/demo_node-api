@@ -4,6 +4,7 @@ import  pool from './db.js';
 
 const app = express();
 const port = 3000;
+app.use(express.json())
 
 
 // handle favicon request 
@@ -23,24 +24,30 @@ app.get("/:id", async(req, res)=>{
     try {
         const {rows} = await pool.query('select * from books where book_id = $1',[req.params.id]);
         if (rows[0]) {
-            return res.json({msg: "OK", data: rows})
+            return res.json(rows)
         }
     } catch (err) {
-     console.log(err)   
+        res.json({msg: err.msg})   
     }
-    // console.log(req.params.id)
-    // res.send("working")
 })
 
+app.post("/", async (req, res) => {
+    try {
+        const { name, price } = req.body;
+        const query = {
+            text: 'INSERT INTO books (Name, Price) VALUES ($1, $2) RETURNING *',
+            values: [name, price],
+        };
+        const { rows } = await pool.query(query);
+        res.json({ msg: "ok", data: rows });
+    } catch (err) {
+        console.error(err);
+        res.json({ msg: err.message });
+    }
+});
 
 
-// app.post('/', (req, res)=>{
-//     try {
-        
-//     } catch (err) {
-//         long
-//     }
-// })
+
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
