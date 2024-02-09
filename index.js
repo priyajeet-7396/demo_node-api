@@ -63,20 +63,24 @@ app.put('/:id', async (req, res) => {
 
 
 
-// app.delete('/:id', async (req, res) => {
-//     try {
-//         console.log(req.params.id);
-//         const query = {
-//             text: 'DELETE FROM books where book_id = $1 RETURNING *',
-//             values: [req.params.id],
-//         };
-//         const {rows} = await pool.query(query);
-//         res.json({ msg: "ok", data: rows });
-//     } catch (err) {
-//         console.error(err);
-//     }
-// });
+app.delete('/:id', async (req, res) => {
+    try {
+        const query = {
+            text: 'DELETE FROM books where book_id = $1 RETURNING *',
+            values: [req.params.id],
+        };
+        const { rows } = await pool.query(query);
 
+        if(rows[0]) {
+            return res.json({ msg: "ok", data: rows[0] });
+        }
+
+        return res.status(404).json({msg: "not found"})
+        
+    } catch (err) {
+        console.error(err);
+    }
+});
 
 
 app.listen(port, () => {
