@@ -28,8 +28,8 @@ app.get("/:id", async(req, res)=>{
     } catch (err) {
      console.log(err)   
     }
-    console.log(req.params.id)
-    res.send("working")
+    // console.log(req.params.id)
+    // res.send("working")
 })
 
 
