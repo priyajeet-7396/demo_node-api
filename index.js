@@ -1,21 +1,30 @@
-const express = require("express");
+// index.js
+import express from 'express';
+import pg from 'pg';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const { Pool } = pg;
+
 const app = express();
-const router = express.Router();
+const port = 3000;
 
-require('dotenv').config();
-app.use(express.json());
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL,
+});
 
-const pool = require('./database');
+app.get('/', async (req, res) => {
+  try {
+    const response = await pool.query('SELECT book_id, name, price FROM books');
+    return res.status(200).json(response.rows);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
 
-
-app.get("/", async (req, res) => {
-    try {
-        const { rows } = await pool.query("select * from books");
-        res.json(rows);
-    } catch (error) {
-        res.json({ msg: error.msg });
-    }
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
 });
 
 
-app.listen(process.env.PORT, () => console.log("Server is running on port 5000"));
