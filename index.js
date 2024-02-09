@@ -46,6 +46,36 @@ app.post("/", async (req, res) => {
     }
 });
 
+app.put('/:id', async (req, res) => {
+    try {
+        const { name, price} = req.body;
+        const query = {
+            text: 'UPDATE books set Name = $1, Price = $2 where book_id = $3 RETURNING *',
+            values: [name, price ,req.params.id],
+        };
+        const {rows} = await pool.query(query);
+        res.json({ msg: "ok", data: rows });
+    } catch (err) {
+        console.error(err);
+        console.log(err);
+    }
+})
+
+
+
+// app.delete('/:id', async (req, res) => {
+//     try {
+//         console.log(req.params.id);
+//         const query = {
+//             text: 'DELETE FROM books where book_id = $1 RETURNING *',
+//             values: [req.params.id],
+//         };
+//         const {rows} = await pool.query(query);
+//         res.json({ msg: "ok", data: rows });
+//     } catch (err) {
+//         console.error(err);
+//     }
+// });
 
 
 
