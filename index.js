@@ -1,11 +1,13 @@
 // index.js
 import express from 'express';
 import  pool from './db.js';
+import cors from 'cors';
 
 const app = express();
-const port = 3000;
+const port = 5000;
 app.use(express.json())
 
+app.use(cors());
 
 // handle favicon request 
 app.get('/favicon.ico', (req, res) => res.status(204));
